@@ -29,6 +29,21 @@
 
   var charts = {};
 
+  // 互动增强：工具栏（保存图片）+ 滚轮缩放
+  function toolBox() {
+    return {
+      feature: { saveAsImage: { name: "智启新程-数据图表", title: "保存图片", pixelRatio: 2 } },
+      iconStyle: { borderColor: "#4A5A6E" },
+      emphasis: { iconStyle: { borderColor: "#C8102E" } },
+      right: 8, top: 0
+    };
+  }
+  function zoomBox() {
+    return [
+      { type: "inside", xAxisIndex: 0, filterMode: "none", zoomOnMouseWheel: true, moveOnMouseMove: true, moveOnMouseWheel: false }
+    ];
+  }
+
   /* ───────── 1. 产业规模 ───────── */
   var scaleYears = ["2020", "2021", "2022", "2023", "2024", "2025E", "2026E", "2027E", "2028E", "2029E", "2030E"];
   var scaleValues = [0.23, 0.38, 0.57, 0.73, 0.92, 1.50, 2.40, 3.84, 6.10, 9.79, 15.70];
@@ -43,6 +58,8 @@
     var option = {
       backgroundColor: "transparent",
       tooltip: baseTooltip(),
+      toolbox: toolBox(),
+      dataZoom: zoomBox(),
       legend: {
         top: 4, textStyle: { color: INKSOFT, fontSize: 12.5, fontFamily: fontFamily },
         itemWidth: 16, itemHeight: 9
@@ -133,6 +150,8 @@
     var ratio = intel.map(function (v, i) { return +(v / gen[i]).toFixed(1); });
     c.setOption({
       backgroundColor: "transparent",
+      toolbox: toolBox(),
+      dataZoom: zoomBox(),
       tooltip: Object.assign(baseTooltip(), {
         formatter: function (ps) {
           var h = ps[0].axisValue + "年";
@@ -271,6 +290,7 @@
     ];
     c.setOption({
       backgroundColor: "transparent",
+      toolbox: toolBox(),
       tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, backgroundColor: "rgba(8,31,68,.94)", borderWidth: 1, borderColor: "rgba(212,169,75,.4)", textStyle: { color: "#fff", fontSize: 13, fontFamily: fontFamily }, formatter: function (ps) { var p = ps[0]; var d = data[p.dataIndex]; return d.name + "（2030E）<br/>GDP增益：<b>" + d.value + "%</b><br/>增量规模：<b>" + d.gdp + "</b>"; } },
       grid: { left: 46, right: 30, top: 30, bottom: 34 },
       xAxis: Object.assign({ type: "value", max: 30, axisLabel: { formatter: "+{value}%", color: INKSOFT, fontSize: 12 } }, axisStyle()),

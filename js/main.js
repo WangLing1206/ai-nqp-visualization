@@ -112,6 +112,49 @@
   // 兜底：3 秒后强制初始化
   setTimeout(initCharts, 3000);
 
+  /* ───────── 新闻横向滚屏交互 ───────── */
+  var track = document.getElementById("newsTrack");
+  if (track) {
+    var prevBtn = document.getElementById("newsPrev");
+    var nextBtn = document.getElementById("newsNext");
+    var cardStep = function () {
+      var card = track.querySelector(".news-card");
+      return card ? card.offsetWidth + 20 : 360;
+    };
+    prevBtn.addEventListener("click", function () {
+      track.scrollBy({ left: -cardStep(), behavior: "smooth" });
+    });
+    nextBtn.addEventListener("click", function () {
+      track.scrollBy({ left: cardStep(), behavior: "smooth" });
+    });
+    // 滚轮纵向转横向
+    track.addEventListener("wheel", function (e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        track.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+    // 鼠标拖拽
+    var isDown = false, startX = 0, startScroll = 0;
+    track.addEventListener("mousedown", function (e) {
+      isDown = true; startX = e.pageX; startScroll = track.scrollLeft;
+      track.classList.add("dragging");
+    });
+    window.addEventListener("mousemove", function (e) {
+      if (!isDown) return;
+      track.scrollLeft = startScroll - (e.pageX - startX);
+    });
+    window.addEventListener("mouseup", function () {
+      isDown = false; track.classList.remove("dragging");
+    });
+    // 键盘左右键（聚焦在轮播内时）
+    track.setAttribute("tabindex", "0");
+    track.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { e.preventDefault(); track.scrollBy({ left: -cardStep(), behavior: "smooth" }); }
+      if (e.key === "ArrowRight") { e.preventDefault(); track.scrollBy({ left: cardStep(), behavior: "smooth" }); }
+    });
+  }
+
   /* ───────── 图表 Tab 切换 ───────── */
   var tabs = document.querySelectorAll("#scaleTabs .chart-tab");
   tabs.forEach(function (t) {
